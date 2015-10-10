@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 版本更新对话框 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:background="@drawable/shape_round_corner_ten"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/version_update_confirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="10dp"
+        android:text="应用更新"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/version_update_cancle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="17dp"
+        android:text="检测到新版本，是否更新？"
+        android:textSize="18sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#aadafb" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="#aadafb"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/version_update_cancle_btn"
+            android:layout_width="160dp"
+            android:layout_height="47dp"
+            android:layout_weight="1"
+            android:background="#ffffff"
+            android:text="@string/cancle"
+            android:textColor="#3d9bef"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent" />
+
+        <Button
+            android:id="@+id/version_update_confirm_btn"
+            android:layout_width="160dp"
+            android:layout_height="47dp"
+            android:layout_weight="1"
+            android:background="#ffffff"
+            android:text="@string/update"
+            android:textColor="#3d9bef"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,17 @@
+package com.example.activity;
+
+import android.app.Activity;
+
+/**
+ * 故障树展示页面
+ * 
+ * @author steven
+ * 
+ */
+public class FaultTreeDetailActivity extends Activity {
+
+	public FaultTreeDetailActivity() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/activity_theme_background"
+    android:orientation="vertical" >
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:flipInterval="30" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#cfe4ff"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp" >
+
+        <Button
+            android:id="@+id/fault_query_page_btn"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:drawableTop="@drawable/fault_query"
+            android:text="@string/fault_query"
+            android:textColor="#8d8b88"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/fault_feedback_page_btn"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:drawableTop="@drawable/fault_feedback"
+            android:text="@string/fault_feedback"
+            android:textColor="#8d8b88"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/me_page_btn"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:drawableTop="@drawable/me"
+            android:text="@string/me"
+            android:textColor="#8d8b88"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+</LinearLayout>

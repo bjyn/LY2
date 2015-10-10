@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/activity_theme_background"
+    android:orientation="vertical" >
+
+    <EditText
+        android:id="@+id/user_code_et"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/user_pwd_et"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="135dp"
+        android:background="@drawable/shape_round_corner_five"
+        android:hint="请输入您的账号"
+        android:padding="2dp"
+        android:singleLine="true"
+        android:textSize="20sp" />
+
+    <EditText
+        android:id="@+id/user_pwd_et"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/user_code_et"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/shape_round_corner_five"
+        android:hint="请输入您的密码"
+        android:inputType="textPassword"
+        android:padding="2dp"
+        android:singleLine="true"
+        android:textSize="20sp"
+        android:maxLength="16" />
+
+    <Button
+        android:id="@+id/load_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/user_pwd_et"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="36dp"
+        android:background="@android:color/transparent"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="登录"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/load_logo_tv"
+        android:layout_width="220dp"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/zggd_logo2" />
+
+    <TextView
+        android:id="@+id/load_version_tv"
+        android:layout_width="160dp"
+        android:layout_height="30dp"
+        android:layout_above="@id/load_logo_tv"
+        android:layout_alignLeft="@+id/user_pwd_et"
+        android:layout_alignRight="@+id/user_pwd_et"
+        android:layout_marginBottom="5dp"
+        android:gravity="center"
+        android:text="当前版本号：0.0"
+        android:textSize="19sp" >
+    </TextView>
+
+</RelativeLayout>
