@@ -5,6 +5,7 @@ import java.util.List;
 import com.example.bean.Company;
 import com.example.bean.FanBrand;
 import com.example.bean.FanType;
+import com.example.bean.HotSearch;
 import com.example.bean.UnfeedbackFT;
 
 /**
@@ -23,6 +24,7 @@ public class UserSingleton {
 	private List<FanType> fanTypes;// 风机列表
 	private List<Company> companies;// 项目公司列表
 	private List<UnfeedbackFT> unfeedbackFTs;// 未反馈列表
+	private List<HotSearch> hotSearchs;
 	private static UserSingleton userSingleton;
 	
 	
@@ -106,6 +108,20 @@ public class UserSingleton {
 
 	public void setLimitFeedbackNumber(int limitFeedbackNumber) {
 		this.limitFeedbackNumber = limitFeedbackNumber;
+	}
+
+	/**
+	 * @return the hotSearchs
+	 */
+	public List<HotSearch> getHotSearchs() {
+		return hotSearchs;
+	}
+
+	/**
+	 * @param hotSearchs the hotSearchs to set
+	 */
+	public void setHotSearchs(List<HotSearch> hotSearchs) {
+		this.hotSearchs = hotSearchs;
 	}
 
 	/**
