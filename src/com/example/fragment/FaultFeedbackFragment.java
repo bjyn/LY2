@@ -74,8 +74,8 @@ public class FaultFeedbackFragment extends FaultFragment {
 			public void onClick(View v) {
 				faultPheEt.setText("");
 				faultTreeCodeEt.setText("");
-				chooseFanBrandTv.setText("");
-				chooseFanTypeTv.setText("");
+//				chooseFanBrandTv.setText("");
+//				chooseFanTypeTv.setText("");
 				chosedFanBrandCode = null;
 				chosedFanTypeCode = null;
 				chosedFeedbackStatus = null;

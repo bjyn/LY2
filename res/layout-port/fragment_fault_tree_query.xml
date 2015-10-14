@@ -7,122 +7,39 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="9dp"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="15dp" >
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/shape_rectangle_gray_border"
+        android:orientation="horizontal" >
 
-        <LinearLayout
+        <TextView
+           
+            android:layout_width="22dp"
+            android:layout_height="23dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="10dp"
+            android:background="@drawable/search_flag" />
+
+        <TextView
+            android:id="@+id/search_by_fault_code_tv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center" >
-
-            <AutoCompleteTextView
-                android:id="@+id/fault_tree_code"
-                android:layout_width="155dp"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="18dp"
-                android:background="@drawable/shape_round_corner_five"
-                android:gravity="center"
-                android:hint="请输入故障代码"
-                android:paddingBottom="5dp"
-                android:paddingLeft="2dp"
-                android:paddingRight="2dp"
-                android:paddingTop="5dp"
-                android:singleLine="true"
-                android:textSize="18sp" >
-
-                <requestFocus />
-            </AutoCompleteTextView>
-
-            <AutoCompleteTextView
-                android:id="@+id/fault_phe_or_fb_status_et"
-                android:layout_width="155dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/shape_round_corner_five"
-                android:gravity="center"
-                android:hint="请输入故障现象"
-                android:paddingBottom="5dp"
-                android:paddingLeft="2dp"
-                android:paddingRight="2dp"
-                android:paddingTop="5dp"
-                android:singleLine="true"
-                android:textSize="18sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:gravity="center" >
-
-            <TextView
-                android:id="@+id/choose_fan_brand_code_tv"
-                android:layout_width="155dp"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="18dp"
-                android:background="@drawable/shape_round_corner_five"
-                android:drawableEnd="@android:drawable/arrow_down_float"
-                android:gravity="center"
-                android:hint="请输入风机品牌"
-                android:paddingBottom="5dp"
-                android:paddingLeft="2dp"
-                android:paddingRight="2dp"
-                android:paddingTop="5dp"
-                android:singleLine="true"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/choose_fan_type_code_tv"
-                android:layout_width="155dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/shape_round_corner_five"
-                android:drawableEnd="@android:drawable/arrow_down_float"
-                android:gravity="center"
-                android:hint="请输入风机型号"
-                android:paddingBottom="5dp"
-                android:paddingLeft="2dp"
-                android:paddingRight="2dp"
-                android:paddingTop="5dp"
-                android:singleLine="true"
-                android:textSize="18sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="right" >
-
-            <Button
-                android:id="@+id/query_condition_clean_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="15dp"
-                android:background="@android:color/transparent"
-                android:text="@string/clear"
-                android:textColor="#ffffff" />
-
-            <Button
-                android:id="@+id/query_confirm_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:drawableLeft="@drawable/query_icon"
-                android:text="@string/query"
-                android:textColor="#ffffff" />
-        </LinearLayout>
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|left"
+            android:hint="@string/please_input_fault_code"
+            android:textSize="18sp" />
     </LinearLayout>
 
-    <LinearLayout
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:layout_height="1dp"
+        android:background="#d3d3d3" />
 
-        <ListView
-            android:id="@+id/listView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-        </ListView>
-    </LinearLayout>
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    </ListView>
 
 </LinearLayout>

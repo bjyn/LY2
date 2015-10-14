@@ -2,17 +2,35 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:background="#0f7dcc"
+    android:orientation="horizontal" >
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:text="@string/senior_search"
+        android:textColor="#0f7dcc" />
 
     <TextView
         android:id="@+id/actionbar_tv"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:background="#adcef5"
+        android:layout_gravity="center"
+        android:layout_weight="1"
         android:gravity="center"
         android:text="TextView"
-        android:textSize="20sp"
-        android:textColor="#000000"
-        android:textStyle="bold" />
+        android:textColor="#ffffff"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/senior_search_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:gravity="center_horizontal|bottom"
+        android:text="@string/senior_search"
+        android:textColor="#ffffff"
+        android:textSize="16sp" />
 
 </LinearLayout>

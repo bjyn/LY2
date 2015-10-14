@@ -2,6 +2,7 @@ package com.example.activity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.Inflater;
 
 import javax.security.auth.PrivateCredentialPermission;
 
@@ -29,8 +30,10 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends FragmentActivity {
+	private Button seniorSearchBtn;// 高级查询按钮
 	private Button faultTreeQueryBtn;// 故障树查询页按钮
 	private Button faultTreeFeedbackBtn;// 故障树反馈页按钮
 	private Button meSettingBtn;// “我”设置页按钮
@@ -52,108 +55,125 @@ public class MainActivity extends FragmentActivity {
 		actionBar.setCustomView(R.layout.actionbar);
 		((TextView) actionBar.getCustomView().findViewById(R.id.actionbar_tv))
 				.setText("故障树查询");
-		// 加载其他控件
-		fragments = new ArrayList<Fragment>();
-		faultTreeQueryBtn = (Button) findViewById(R.id.fault_query_page_btn);
-		meSettingBtn = (Button) findViewById(R.id.me_page_btn);
-		faultTreeFeedbackBtn = (Button) findViewById(R.id.fault_feedback_page_btn);
-		mViewPager = (ViewPager) findViewById(R.id.viewpager);
-		// 初始化fragmentlist
-		faultQueryFragment = new FaultQueryFragment();
-		faultFeedbackFragment = new FaultFeedbackFragment();
-		meSettingFragment = new SettingFragment();
-		fragments.add(faultQueryFragment);
-		fragments.add(faultFeedbackFragment);
-		fragments.add(meSettingFragment);
-		// 设置viewPager的adapter
-		myFragmentPagerAdapter = new MyFragmentPagerAdapter(
-				getSupportFragmentManager(), fragments);
-		mViewPager.setAdapter(myFragmentPagerAdapter);
-		mViewPager.setCurrentItem(0);
-		faultTreeQueryBtn.setTextColor(Color.rgb(39, 142, 255));
-		mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
-
-			@Override
-			public void onPageSelected(int arg0) {
-				switch (arg0) {
-				case 0:
-					// 改变对应按钮的颜色
-					faultTreeQueryBtn.setTextColor(Color.rgb(39, 142, 255));
-					faultTreeFeedbackBtn.setTextColor(Color.rgb(141, 139, 136));
-					meSettingBtn.setTextColor(Color.rgb(141, 139, 136));
-					((TextView) actionBar.getCustomView().findViewById(
-							R.id.actionbar_tv)).setText("故障树查询");
-					break;
-				case 1:
-					// 改变对应按钮的颜色
-					faultTreeQueryBtn.setTextColor(Color.rgb(141, 139, 136));
-					faultTreeFeedbackBtn.setTextColor(Color.rgb(39, 142, 255));
-					meSettingBtn.setTextColor(Color.rgb(141, 139, 136));
-					((TextView) actionBar.getCustomView().findViewById(
-							R.id.actionbar_tv)).setText("故障反馈查询");
-					break;
-				case 2:
-					// 改变对应按钮的颜色
-					faultTreeQueryBtn.setTextColor(Color.rgb(141, 139, 136));
-					faultTreeFeedbackBtn.setTextColor(Color.rgb(141, 139, 136));
-					meSettingBtn.setTextColor(Color.rgb(39, 142, 255));
-					((TextView) actionBar.getCustomView().findViewById(
-							R.id.actionbar_tv)).setText("我");
-					break;
-				default:
-					break;
-				}
-			}
-
-			// 页面滑动时调用
-			@Override
-			public void onPageScrolled(int arg0, float arg1, int arg2) {
-
-			}
-
-			// 状态改变时调用
-			@Override
-			public void onPageScrollStateChanged(int arg0) {
-			}
-		});
-		// 设置下方按钮点击事件
-		OnClickListener buttonBarOnClickListener = new OnClickListener() {
+		seniorSearchBtn = (Button) actionBar.getCustomView().findViewById(
+				R.id.senior_search_btn);
+		seniorSearchBtn.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				switch (v.getId()) {
-				case R.id.fault_query_page_btn:
-					mViewPager.setCurrentItem(0);
-					faultTreeQueryBtn.setTextColor(Color.rgb(39, 142, 255));
-					faultTreeFeedbackBtn.setTextColor(Color.rgb(141, 139, 136));
-					meSettingBtn.setTextColor(Color.rgb(141, 139, 136));
-					((TextView) actionBar.getCustomView().findViewById(
-							R.id.actionbar_tv)).setText("故障树查询");
-					break;
-				case R.id.fault_feedback_page_btn:
-					mViewPager.setCurrentItem(1);
-					faultTreeQueryBtn.setTextColor(Color.rgb(141, 139, 136));
-					faultTreeFeedbackBtn.setTextColor(Color.rgb(39, 142, 255));
-					meSettingBtn.setTextColor(Color.rgb(141, 139, 136));
-					((TextView) actionBar.getCustomView().findViewById(
-							R.id.actionbar_tv)).setText("故障反馈查询");
-					break;
-				case R.id.me_page_btn:
-					mViewPager.setCurrentItem(2);
-					faultTreeQueryBtn.setTextColor(Color.rgb(141, 139, 136));
-					faultTreeFeedbackBtn.setTextColor(Color.rgb(141, 139, 136));
-					meSettingBtn.setTextColor(Color.rgb(39, 142, 255));
-					((TextView) actionBar.getCustomView().findViewById(
-							R.id.actionbar_tv)).setText("我");
-					break;
-				default:
-					break;
-				}
+				Toast.makeText(MainActivity.this, "点击了高级查询", Toast.LENGTH_SHORT).show();
+				LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				View viewInSearchPop = inflater.inflate(
+						R.layout.popupwindow_senior_search, null);
+				PopupWindow seniorSearchPopupWindow = new PopupWindow(viewInSearchPop, 450, 600, true);
+				seniorSearchPopupWindow.setTouchable(true);
+				seniorSearchPopupWindow.showAsDropDown(v);
+				// TODO 弹出高级查询window
+
 			}
-		};
-		faultTreeQueryBtn.setOnClickListener(buttonBarOnClickListener);
-		faultTreeFeedbackBtn.setOnClickListener(buttonBarOnClickListener);
-		meSettingBtn.setOnClickListener(buttonBarOnClickListener);
+		});
+//		// 加载其他控件
+//		fragments = new ArrayList<Fragment>();
+//		faultTreeQueryBtn = (Button) findViewById(R.id.fault_query_page_btn);
+//		meSettingBtn = (Button) findViewById(R.id.me_page_btn);
+//		faultTreeFeedbackBtn = (Button) findViewById(R.id.fault_feedback_page_btn);
+//		mViewPager = (ViewPager) findViewById(R.id.viewpager);
+//		// 初始化fragmentlist
+//		faultQueryFragment = new FaultQueryFragment();
+//		faultFeedbackFragment = new FaultFeedbackFragment();
+//		meSettingFragment = new SettingFragment();
+//		fragments.add(faultQueryFragment);
+//		fragments.add(faultFeedbackFragment);
+//		fragments.add(meSettingFragment);
+//		// 设置viewPager的adapter
+//		myFragmentPagerAdapter = new MyFragmentPagerAdapter(
+//				getSupportFragmentManager(), fragments);
+//		mViewPager.setAdapter(myFragmentPagerAdapter);
+//		mViewPager.setCurrentItem(0);
+//		faultTreeQueryBtn.setTextColor(Color.rgb(39, 142, 255));
+//		mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
+//
+//			@Override
+//			public void onPageSelected(int arg0) {
+//				switch (arg0) {
+//				case 0:
+//					// 改变对应按钮的颜色
+//					faultTreeQueryBtn.setTextColor(Color.rgb(39, 142, 255));
+//					faultTreeFeedbackBtn.setTextColor(Color.rgb(141, 139, 136));
+//					meSettingBtn.setTextColor(Color.rgb(141, 139, 136));
+//					((TextView) actionBar.getCustomView().findViewById(
+//							R.id.actionbar_tv)).setText("故障树查询");
+//					break;
+//				case 1:
+//					// 改变对应按钮的颜色
+//					faultTreeQueryBtn.setTextColor(Color.rgb(141, 139, 136));
+//					faultTreeFeedbackBtn.setTextColor(Color.rgb(39, 142, 255));
+//					meSettingBtn.setTextColor(Color.rgb(141, 139, 136));
+//					((TextView) actionBar.getCustomView().findViewById(
+//							R.id.actionbar_tv)).setText("故障反馈查询");
+//					break;
+//				case 2:
+//					// 改变对应按钮的颜色
+//					faultTreeQueryBtn.setTextColor(Color.rgb(141, 139, 136));
+//					faultTreeFeedbackBtn.setTextColor(Color.rgb(141, 139, 136));
+//					meSettingBtn.setTextColor(Color.rgb(39, 142, 255));
+//					((TextView) actionBar.getCustomView().findViewById(
+//							R.id.actionbar_tv)).setText("我");
+//					break;
+//				default:
+//					break;
+//				}
+//			}
+//
+//			// 页面滑动时调用
+//			@Override
+//			public void onPageScrolled(int arg0, float arg1, int arg2) {
+//
+//			}
+//
+//			// 状态改变时调用
+//			@Override
+//			public void onPageScrollStateChanged(int arg0) {
+//			}
+//		});
+//		// 设置下方按钮点击事件
+//		OnClickListener buttonBarOnClickListener = new OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				switch (v.getId()) {
+//				case R.id.fault_query_page_btn:
+//					mViewPager.setCurrentItem(0);
+//					faultTreeQueryBtn.setTextColor(Color.rgb(39, 142, 255));
+//					faultTreeFeedbackBtn.setTextColor(Color.rgb(141, 139, 136));
+//					meSettingBtn.setTextColor(Color.rgb(141, 139, 136));
+//					((TextView) actionBar.getCustomView().findViewById(
+//							R.id.actionbar_tv)).setText("故障树查询");
+//					break;
+//				case R.id.fault_feedback_page_btn:
+//					mViewPager.setCurrentItem(1);
+//					faultTreeQueryBtn.setTextColor(Color.rgb(141, 139, 136));
+//					faultTreeFeedbackBtn.setTextColor(Color.rgb(39, 142, 255));
+//					meSettingBtn.setTextColor(Color.rgb(141, 139, 136));
+//					((TextView) actionBar.getCustomView().findViewById(
+//							R.id.actionbar_tv)).setText("故障反馈查询");
+//					break;
+//				case R.id.me_page_btn:
+//					mViewPager.setCurrentItem(2);
+//					faultTreeQueryBtn.setTextColor(Color.rgb(141, 139, 136));
+//					faultTreeFeedbackBtn.setTextColor(Color.rgb(141, 139, 136));
+//					meSettingBtn.setTextColor(Color.rgb(39, 142, 255));
+//					((TextView) actionBar.getCustomView().findViewById(
+//							R.id.actionbar_tv)).setText("我");
+//					break;
+//				default:
+//					break;
+//				}
+//			}
+//		};
+//		faultTreeQueryBtn.setOnClickListener(buttonBarOnClickListener);
+//		faultTreeFeedbackBtn.setOnClickListener(buttonBarOnClickListener);
+//		meSettingBtn.setOnClickListener(buttonBarOnClickListener);
 		// 展示公告
 		LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View viewInPopup = layoutInflater.inflate(R.layout.popupwindow_notice,
@@ -166,8 +186,8 @@ public class MainActivity extends FragmentActivity {
 				.findViewById(R.id.notice_close_button);
 		Button confirmBtn = (Button) viewInPopup
 				.findViewById(R.id.notice_confirm_btn);
-		//TODO 从网络获取公告信息
-		String notice="dagjey";
+		// TODO 从网络获取公告信息
+		String notice = "dagjey";
 		contentTv.setText(notice);
 		OnClickListener clickListener = new OnClickListener() {
 
