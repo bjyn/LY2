@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.example.bean.AbsOfflineBean;
 import com.example.bean.FTBaseInfo;
 import com.example.bean.FTFBBaseInfo;
 import com.example.bean.FanBrand;
@@ -219,9 +220,9 @@ public class DBDao {
 	 * 
 	 * @return
 	 */
-	public List<OfflineFeedbacked> getAllOfflineFeedbackedsByTime() {
+	public List<AbsOfflineBean> getAllOfflineFeedbackedsByTime() {
 		SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
-		List<OfflineFeedbacked> offlineFeedbackeds = new ArrayList<>();
+		List<AbsOfflineBean> offlineFeedbackeds = new ArrayList<>();
 		Cursor cursor = db.rawQuery(
 				"select * from FT_TO_FEEDBACK_INFO order by time asc", null);
 		while (cursor.moveToNext()) {
@@ -289,13 +290,13 @@ public class DBDao {
 	/**
 	 *  获取所有离线状态下被置为未反馈的纪录
 	 */
-	public List<OfflineUnfeedback> getAllOfflineUnfeedbacksByTime() {
+	public List<AbsOfflineBean> getAllOfflineUnfeedbacksByTime() {
 		SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
 		Cursor cursor = db
 				.rawQuery(
 						"select * from FT_SET_UNFEEDBACK_STATUS_INFO order by time asc",
 						null);
-		List<OfflineUnfeedback> unfeedbackList = new ArrayList<>();
+		List<AbsOfflineBean> unfeedbackList = new ArrayList<>();
 		while (cursor.moveToNext()) {
 			unfeedbackList.add(new OfflineUnfeedback(cursor.getString(0),
 					cursor.getString(1)));
