@@ -23,7 +23,7 @@ public class UserSingleton {
 	private List<FanBrand> fanBrands;// 品牌列表
 	private List<FanType> fanTypes;// 风机列表
 	private List<Company> companies;// 项目公司列表
-	private List<UnfeedbackFT> unfeedbackFTs;// 未反馈列表
+//	private List<UnfeedbackFT> unfeedbackFTs;// 未反馈列表
 	private List<HotSearch> hotSearchs;
 	private static UserSingleton userSingleton;
 	
@@ -69,13 +69,13 @@ public class UserSingleton {
 		this.fanTypes = fanTypes;
 	}
 
-	public List<UnfeedbackFT> getUnfeedbackFTs() {
-		return unfeedbackFTs;
-	}
-
-	public void setUnfeedbackFTs(List<UnfeedbackFT> unfeedbackFTs) {
-		this.unfeedbackFTs = unfeedbackFTs;
-	}
+//	public List<UnfeedbackFT> getUnfeedbackFTs() {
+//		return unfeedbackFTs;
+//	}
+//
+//	public void setUnfeedbackFTs(List<UnfeedbackFT> unfeedbackFTs) {
+//		this.unfeedbackFTs = unfeedbackFTs;
+//	}
 
 	private UserSingleton() {
 	}

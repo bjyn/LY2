@@ -99,7 +99,15 @@ public class OfflineDataUploadTool {
 				}
 			} else {
 				OfflineFeedbacked offlineFeedbacked=(OfflineFeedbacked)absOfflineBean;
-				uploadFeedbacked(offlineFeedbacked);
+				if (uploadFeedbacked(offlineFeedbacked)) {
+					// succeed.
+					pQueue.poll();
+				} else {
+					Log.e(TAG, "上传离线数据失败：Unfeedback记录：Code:"
+							+ offlineFeedbacked.getCode() + "/Time:"
+							+ offlineFeedbacked.getFeedbackTime());
+					return false;
+				}
 			}
 		}
 		return true;
