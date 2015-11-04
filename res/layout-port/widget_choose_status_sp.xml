@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mywidget="http://schemas.android.com/apk/res/com.example.lyfaultdiagnosissystem"
+    android:layout_width="match_parent"
+    android:layout_height="38dp"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
+    android:layout_marginTop="15dp"
+    android:background="@drawable/shape_rectangle_gray_border"
+    android:orientation="horizontal"
+    android:padding="10dp" >
+
+    <com.example.mywidget.HintSpinner
+        android:id="@+id/choose_feedback_status_sp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:gravity="center_vertical|left"
+        mywidget:hints="@string/please_input_feedback_status" />
+
+    <TextView
+        android:layout_width="21dp"
+        android:layout_height="20dp"
+        android:layout_gravity="right"
+        android:background="@drawable/spinner_close_log"
+        android:focusable="false"
+        android:gravity="center" >
+    </TextView>
+
+</FrameLayout>
