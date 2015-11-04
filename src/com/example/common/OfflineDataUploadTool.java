@@ -1,16 +1,24 @@
 package com.example.common;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.PriorityBlockingQueue;
 
 import net.tsz.afinal.FinalHttp;
 import net.tsz.afinal.http.AjaxParams;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.example.bean.AbsOfflineBean;
 import com.example.bean.OfflineFeedbacked;
 import com.example.bean.OfflineUnfeedback;
 import com.example.singleton.UserSingleton;
@@ -27,6 +35,10 @@ public class OfflineDataUploadTool {
 	private DBDao dbDao;
 	private HttpUtils httpUtils;
 	private UserSingleton userSingleton = UserSingleton.getInstance();
+	private PriorityBlockingQueue<AbsOfflineBean> pQueue;
+	@SuppressLint("SimpleDateFormat")
+	SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
+			"yyyy/MM/dd HH:mm:ss");
 
 	public OfflineDataUploadTool(Context context) {
 		super();
@@ -38,158 +50,165 @@ public class OfflineDataUploadTool {
 	 * 上传在离线状态下置为未反馈或已反馈的数据至服务器中同步。 需要在新线程中进行调用。
 	 */
 	public boolean uploadSyncOfflineData() {
-		final List<OfflineUnfeedback> offlineUnfeedbacksByTime = dbDao
+		List<AbsOfflineBean> offlineUnfeedbacksByTime = dbDao
 				.getAllOfflineUnfeedbacksByTime();
-		final List<OfflineFeedbacked> offlineFeedbackedsByTime = dbDao
+		List<AbsOfflineBean> offlineFeedbackedsByTime = dbDao
 				.getAllOfflineFeedbackedsByTime();
-
-		// 1.先上传在在线状态下被置为未反馈，并在离线情况下被置为已反馈的纪录
-		for (OfflineFeedbacked offlineFeedbacked : offlineFeedbackedsByTime) {
-			if (!offlineFeedbacked.getFeedbackCode().equals("")) {
-				// 反馈码存在：即该树在在线状态下被置为未反馈
-				// 同步上传。
-				FinalHttp finalHttp = new FinalHttp();
-				finalHttp.configTimeout(10000);// 设置超时。如果返回失败result就会为null
-				Map<String, String> params = new HashMap<>();
-				params.put("token", userSingleton.getValidateToken());
-				params.put("feedbackcode", offlineFeedbacked.getFeedbackCode());
-				params.put("feedbackType", offlineFeedbacked.getFeedbackType());
-				params.put("handleFaultCode",
-						offlineFeedbacked.getHandleFaultCode());
-				params.put("description", offlineFeedbacked.getDescription());
-				params.put("feedbackWindCode",
-						offlineFeedbacked.getFeedbackWindCode());
-				String result = (String) finalHttp.getSync(httpUtils.URL
-						+ httpUtils.FEEDBACK_FT, new AjaxParams(params));
-				if (result.equals("") || result == null) {
-					// 出错。
-					Log.e(HttpUtils.TAG,
-							"Error:同步上传失败："
-									+ offlineFeedbacked.getFeedbackCode());
-					return false;
-				} else {
-					JSONObject resultObject = JSON.parseObject(result);
-					String statusCode = resultObject.getString("statusCode");
-					if (statusCode.equals("300")) {
-						Log.e(HttpUtils.TAG,
-								"300:" + resultObject.getString("message"));
-						return false;
-					} else if (statusCode.equals("200")) {
-						// 成功.
-						// 1.删除离线已反馈表中的纪录
-						dbDao.deleteOfflineFeedbacked(offlineFeedbacked);
-						// 2.完成
-					} else {
-						Log.e(HttpUtils.TAG, "未知错误。成功返回。但是解析错误？");
-						return false;
-					}
-				}
-			}
-		}
-
-		// 2.
-		// 再按时间顺序上传在离线状态下被置为未反馈的纪录。并检查该纪录是否被反馈。若已被反馈，紧接着上传该已反馈纪录。（在其他未反馈纪录上传前）
-		for (OfflineUnfeedback offlineUnfeedback : offlineUnfeedbacksByTime) {
-			FinalHttp finalHttp = new FinalHttp();
-			finalHttp.configTimeout(10000);
-			Map<String, String> params = new HashMap<>();
-			params.put("token", userSingleton.getValidateToken());
-			params.put("code", offlineUnfeedback.getCode());
-			params.put("queryTime", offlineUnfeedback.getTime());
-			String result = (String) finalHttp.getSync(httpUtils.URL
-					+ httpUtils.SET_UFB_STATUS, new AjaxParams(params));
-			if (result.equals("") || result == null) {
-				// 出错。
-				Log.e(HttpUtils.TAG,
-						"Error:未反馈记录同步上传失败：" + offlineUnfeedback.getCode()
-								+ offlineUnfeedback.getTime());
-				return false;
-			} else {
-				JSONObject resultObject = JSON.parseObject(result);
-				String statusCode = resultObject.getString("statusCode");
-				if (statusCode.equals("300")) {
-					Log.e(HttpUtils.TAG,
-							"300:" + resultObject.getString("message"));
-					return false;
-				} else if (statusCode.equals("200")) {
-					// 1.将返回的feedbackCode填补到FBFT中
-					dbDao.updateOfflineFBFTFeedbackCode(
-							resultObject.getString("feedbackcode"),
-							offlineUnfeedback.getTime());
-					// 2.删除离线未反馈纪录
-					dbDao.deleteOfflineUnfeedback(offlineUnfeedback);
-
-					// 3.检查该纪录是否被反馈
-					for (OfflineFeedbacked offlineFeedbacked : offlineFeedbackedsByTime) {
-						if (offlineFeedbacked.getFeedbackTime().equals(
-								offlineUnfeedback.getTime())) {
-							// 已反馈：上传该纪录。
-							FinalHttp finalHttp2 = new FinalHttp();
-							finalHttp2.configTimeout(10000);
-							Map<String, String> params2 = new HashMap<>();
-							params2.put("token",
-									userSingleton.getValidateToken());
-							params2.put("feedbackcode",
-									offlineFeedbacked.getFeedbackCode());
-							params2.put("feedbackType",
-									offlineFeedbacked.getFeedbackType());
-							params2.put("handleFaultCode",
-									offlineFeedbacked.getHandleFaultCode());
-							params2.put("description",
-									offlineFeedbacked.getDescription());
-							params2.put("feedback_wind_code",
-									offlineFeedbacked.getFeedbackWindCode());
-							String result2 = (String) finalHttp2.getSync(
-									httpUtils.URL + httpUtils.FEEDBACK_FT,
-									new AjaxParams(params2));
-							
-							if (result2.equals("") || result2 == null) {
-								// 出错。
-								Log.e(HttpUtils.TAG, "Error:同步上传失败："
-										+ offlineFeedbacked.getFeedbackCode());
-								return false;
+		pQueue = new PriorityBlockingQueue<AbsOfflineBean>(10,
+				new Comparator<AbsOfflineBean>() {
+					@Override
+					public int compare(AbsOfflineBean lhs, AbsOfflineBean rhs) {
+						try {
+							Date lhsDate = simpleDateFormat.parse(lhs
+									.getRecordTime());
+							Date rhsDate = simpleDateFormat.parse(rhs
+									.getRecordTime());
+							if (lhsDate.before(rhsDate)) {
+								return -1;
+							} else if (lhsDate.after(rhsDate)) {
+								return 1;
 							} else {
-								JSONObject resultObject1 = JSON
-										.parseObject(result2);
-								String statusCode1 = resultObject1
-										.getString("statusCode");
-								if (statusCode1.equals("300")) {
-									Log.e(HttpUtils.TAG,
-											"300:"
-													+ resultObject1
-															.getString("message"));
-									return false;
-								} else if (statusCode1.equals("200")) {
-									// 成功.
-									// 1.删除离线已反馈表中的纪录
-									dbDao.deleteOfflineFeedbacked(offlineFeedbacked);
-								} else {
-									Log.e(HttpUtils.TAG, "未知错误。成功返回。但是解析错误？");
-									return false;
-								}
+								return 0;
 							}
+						} catch (ParseException e) {
+							e.printStackTrace();
+							return 0;
 						}
 					}
+				});
+
+		for (AbsOfflineBean absOfflineBean : offlineFeedbackedsByTime) {
+			pQueue.add(absOfflineBean);
+		}
+		for (AbsOfflineBean absOfflineBean : offlineUnfeedbacksByTime) {
+			pQueue.add(absOfflineBean);
+		}
+
+		while (!pQueue.isEmpty()) {
+			AbsOfflineBean absOfflineBean = pQueue.peek();
+			if (absOfflineBean instanceof OfflineUnfeedback) {
+				OfflineUnfeedback offlineUnfeedback = (OfflineUnfeedback) absOfflineBean;
+				if (uploadUnfeedback(offlineUnfeedback)) {
+					// succeed.
+					pQueue.poll();
 				} else {
-					Log.e(HttpUtils.TAG, "未知错误。成功返回。但是解析错误？");
+					Log.e(TAG, "上传离线数据失败：Unfeedback记录：Code:"
+							+ offlineUnfeedback.getCode() + "/Time:"
+							+ offlineUnfeedback.getTime());
+					return false;
+				}
+			} else {
+				OfflineFeedbacked offlineFeedbacked=(OfflineFeedbacked)absOfflineBean;
+				if (uploadFeedbacked(offlineFeedbacked)) {
+					// succeed.
+					pQueue.poll();
+				} else {
+					Log.e(TAG, "上传离线数据失败：Unfeedback记录：Code:"
+							+ offlineFeedbacked.getCode() + "/Time:"
+							+ offlineFeedbacked.getFeedbackTime());
 					return false;
 				}
 			}
 		}
+		return true;
+	}
 
-		// 3.最后检测是否已经全部上传成功
-		List<OfflineUnfeedback> afterUploadedOfflineUnfeedbacks = dbDao
-				.getAllOfflineUnfeedbacksByTime();
-		List<OfflineFeedbacked> afterUploadedOfflineFeedbackeds = dbDao
-				.getAllOfflineFeedbackedsByTime();
-
-		if (afterUploadedOfflineFeedbackeds.size() == 0
-				&& afterUploadedOfflineUnfeedbacks.size() == 0) {
-			Log.i(TAG, "离线纪录同步上传完成");
-			return true;
-		} else {
-			Log.e(TAG, "离线纪录同步上传异常");
+	private boolean uploadUnfeedback(OfflineUnfeedback offlineUnfeedback) {
+		FinalHttp finalHttp = new FinalHttp();
+		Map<String, String> params = new HashMap<>();
+		params.put("token", userSingleton.getValidateToken());
+		params.put("treeId", offlineUnfeedback.getCode());
+		String resultString = (String) finalHttp.getSync(httpUtils.URL
+				+ httpUtils.SET_UFB_STATUS, new AjaxParams(params));
+		if (resultString == null || resultString.equals("")) {
+			Log.e(TAG, "离线上传，回传为空:" + offlineUnfeedback.getCode());
 			return false;
+		} else {
+			JSONObject resultObject = JSON.parseObject(resultString);
+			String statusCode = resultObject.getString("statusCode");
+			String feedbackCode = resultObject.getJSONObject("obj").getString(
+					"feedbackCode");
+			switch (statusCode) {
+			case "200":
+				Log.i(TAG, "200:离线上传成功：" + offlineUnfeedback.getCode());
+				break;
+			case "300":
+				Log.e(TAG, "300:离线上传失败：" + offlineUnfeedback.getCode());
+				return false;
+			case "304":
+				Log.e(TAG, "304:重复提交未反馈状态变更：" + offlineUnfeedback.getCode());
+				break;
+			default:
+				return false;
+			}
+			// complete upload . delete the record.
+			
+			// TODO Database:1.删除离线表中的信息
+			
+			// 更新feedbackCode
+			if (feedbackCode != null && !feedbackCode.equals("")) {
+				// TODO Database:更新反馈表中的feedback字段（304的情况下不更新，在重新同步数据的时候会将记录删除）
+				// TODO Logic:
+				ArrayList<AbsOfflineBean> temp=new ArrayList<>();
+				// 检验剩余的队列中是否有
+				while (!pQueue.isEmpty()) {
+					AbsOfflineBean absOfflineBean=pQueue.peek();
+					if (absOfflineBean instanceof OfflineFeedbacked ) {
+						OfflineFeedbacked offlineFeedbacked=(OfflineFeedbacked) absOfflineBean;
+						if (offlineFeedbacked.getCode().equals(offlineUnfeedback.getCode())) {
+							offlineFeedbacked.setFeedbackCode(feedbackCode);
+							break;
+						}
+					}
+					temp.add(pQueue.poll());
+				}
+				
+				// 重新从temp中装入上传的任务
+				for (AbsOfflineBean absOfflineBean : temp) {
+					pQueue.add(absOfflineBean);
+				}
+				
+			}
+			return true;
+		}
+	}
+	
+	
+	private boolean uploadFeedbacked(OfflineFeedbacked	offlineFeedbacked) {
+		FinalHttp finalHttp = new FinalHttp();
+		Map<String, String> params = new HashMap<>();
+		params.put("token", userSingleton.getValidateToken());
+		params.put("feedbackcode", offlineFeedbacked.getFeedbackCode());
+		params.put("type", offlineFeedbacked.getFeedbackType());
+		params.put("companyCode", offlineFeedbacked.getFeedbackCompanyCode());
+		params.put("windCode", offlineFeedbacked.getFeedbackWindCode());
+		params.put("systemMethod", offlineFeedbacked.getHandleFaultCode());
+		params.put("newMethodDes", offlineFeedbacked.getDescription());
+		params.put("feedbackTime", offlineFeedbacked.getFeedbackTime());
+		String resultString = (String) finalHttp.getSync(httpUtils.URL
+				+ httpUtils.FEEDBACK_FT, new AjaxParams(params));
+		if (resultString == null || resultString.equals("")) {
+			Log.e(TAG, "离线上传，回传为空:" + offlineFeedbacked.getCode());
+			return false;
+		} else {
+			JSONObject resultObject = JSON.parseObject(resultString);
+			String statusCode = resultObject.getString("statusCode");
+			switch (statusCode) {
+			case "200":
+				Log.i(TAG, "200:离线上传成功：" + offlineFeedbacked.getCode());
+				break;
+			case "300":
+				Log.e(TAG, "300:离线上传失败：" + offlineFeedbacked.getCode());
+				return false;
+			case "305":
+				Log.e(TAG, "305:重复提交反馈：" + offlineFeedbacked.getCode());
+				break;
+			default:
+				return false;
+			}
+			// complete upload . delete the record.
+			// TODO Database:1.删除离线表中的信息
+			return true;
 		}
 	}
 

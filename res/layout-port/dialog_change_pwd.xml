@@ -61,7 +61,7 @@
         android:layout_marginTop="6dp" >
 
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/testTreeFeedback"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -71,7 +71,7 @@
             android:textSize="17sp" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/testTreeShow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"

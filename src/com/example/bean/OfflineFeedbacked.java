@@ -1,12 +1,13 @@
 package com.example.bean;
 
-public class OfflineFeedbacked {
+public class OfflineFeedbacked extends AbsOfflineBean {
 	private String feedbackCode;// 可以为空
 	private String code;
-	private String feedbackType;
+	private String feedbackType;//反馈类型
+	//0-自学习，1-系统已有方案  2-新处理方案
 	private String handleFaultCode;
 	private String description;
-	private String feedbackTime;
+	private String feedbackTime;// 本地反馈的时间
 	private String feedbackCompanyCode;
 	private String feedbackWindCode;
 	
@@ -32,6 +33,7 @@ public class OfflineFeedbacked {
 		this.feedbackTime = feedbackTime;
 		this.feedbackCompanyCode = feedbackCompanyCode;
 		this.feedbackWindCode = feedbackWindCode;
+		setRecordTime(feedbackTime);
 	}
 
 	public void setFeedbackWindCode(String feedbackWindCode) {
@@ -84,6 +86,7 @@ public class OfflineFeedbacked {
 
 	public void setFeedbackTime(String feedbackTime) {
 		this.feedbackTime = feedbackTime;
+		setRecordTime(feedbackTime);
 	}
 
 	public String getFeedbackCompanyCode() {

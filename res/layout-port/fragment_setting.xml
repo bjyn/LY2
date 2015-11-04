@@ -168,4 +168,16 @@
         android:layout_height="1dp"
         android:background="#cfe4ff" />
 
+    <Button
+        android:id="@+id/testTreeFeedback"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="testTreeFeedback" />
+
+    <Button
+        android:id="@+id/testTreeShow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="testTreeShow" />
+
 </LinearLayout>

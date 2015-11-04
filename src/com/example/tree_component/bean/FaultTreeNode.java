@@ -1,6 +1,5 @@
 package com.example.tree_component.bean;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,39 +9,69 @@ import java.util.List;
  * 
  */
 public class FaultTreeNode {
-	private List<FaultTreeURLBean> urls;// 存储一个节点的所有url
+	public static final int REASON_LAVEL = 2;
+	public static final int POINT_LEVEL = 3;
+	public static final int HANDLE_LAVEL = 4;
 	private String rootCode;// 所属故障树编码
 	private int level;// 所属故障树层数
 	private String parentCode;// 父code
 	private String code;// 该节点code
 	private String name;// 该节点名称
-	private int percentage;// 该节点概率
+	private int comPercentage;// 公司概率
+	private int groupPercentage;// 集团概率
 	private List<FaultTreeNode> childCodes;// 节点的子节点
 	private int locationX;// 节点的横坐标
-	
-	
-	
-	
-	
-public FaultTreeNode(List<FaultTreeURLBean> urls, String rootCode,
-			int level, String parentCode, String code, String name,
-			int percentage) {
+	private OperationInstruction operationInstruction;// 作业指导书
+	private PartInfo partInfo;
+
+	public FaultTreeNode(String rootCode, int level, String parentCode,
+			String code, String name, int comPercentage, int groupPercentage,
+			List<FaultTreeNode> childCodes,
+			OperationInstruction operationInstruction, PartInfo partInfo) {
 		super();
-		this.urls = urls;
 		this.rootCode = rootCode;
 		this.level = level;
 		this.parentCode = parentCode;
 		this.code = code;
 		this.name = name;
-		this.percentage = percentage;
+		this.comPercentage = comPercentage;
+		this.groupPercentage = groupPercentage;
+		this.childCodes = childCodes;
+		this.operationInstruction = operationInstruction;
+		this.partInfo = partInfo;
 	}
 
-	public List<FaultTreeURLBean> getUrls() {
-		return urls;
+	public PartInfo getPartInfo() {
+		return partInfo;
 	}
 
-	public void setUrls(List<FaultTreeURLBean> urls) {
-		this.urls = urls;
+	public void setPartInfo(PartInfo partInfo) {
+		this.partInfo = partInfo;
+	}
+
+	public int getComPercentage() {
+		return comPercentage;
+	}
+
+	public void setComPercentage(int comPercentage) {
+		this.comPercentage = comPercentage;
+	}
+
+	public int getGroupPercentage() {
+		return groupPercentage;
+	}
+
+	public void setGroupPercentage(int groupPercentage) {
+		this.groupPercentage = groupPercentage;
+	}
+
+	public OperationInstruction getOperationInstruction() {
+		return operationInstruction;
+	}
+
+	public void setOperationInstruction(
+			OperationInstruction operationInstruction) {
+		this.operationInstruction = operationInstruction;
 	}
 
 	public String getRootCode() {
@@ -83,14 +112,6 @@ public FaultTreeNode(List<FaultTreeURLBean> urls, String rootCode,
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public int getPercentage() {
-		return percentage;
-	}
-
-	public void setPercentage(int percentage) {
-		this.percentage = percentage;
 	}
 
 	public List<FaultTreeNode> getChildCodes() {

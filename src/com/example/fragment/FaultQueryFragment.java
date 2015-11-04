@@ -9,7 +9,6 @@ import java.util.Map;
 import net.tsz.afinal.FinalHttp;
 import net.tsz.afinal.http.AjaxCallBack;
 import net.tsz.afinal.http.AjaxParams;
-import android.R.integer;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;

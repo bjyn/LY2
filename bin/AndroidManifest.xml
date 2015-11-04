@@ -48,6 +48,11 @@
         </activity>
         <activity android:name="com.example.activity.FaultTreeDetailActivity" >
         </activity>
+        <activity android:name="com.example.activity.PartActivity" >
+        </activity>
+        
+        <activity android:name="com.example.activity.FeedbackActivity" >
+        </activity>
 
         <receiver android:name="com.example.broadcast_receiver.NetStatusListener" >
             <intent-filter>

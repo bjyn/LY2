@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.example.bean.AbsOfflineBean;
 import com.example.bean.FTBaseInfo;
 import com.example.bean.FTFBBaseInfo;
 import com.example.bean.FanBrand;
@@ -219,9 +220,9 @@ public class DBDao {
 	 * 
 	 * @return
 	 */
-	public List<OfflineFeedbacked> getAllOfflineFeedbackedsByTime() {
+	public List<AbsOfflineBean> getAllOfflineFeedbackedsByTime() {
 		SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
-		List<OfflineFeedbacked> offlineFeedbackeds = new ArrayList<>();
+		List<AbsOfflineBean> offlineFeedbackeds = new ArrayList<>();
 		Cursor cursor = db.rawQuery(
 				"select * from FT_TO_FEEDBACK_INFO order by time asc", null);
 		while (cursor.moveToNext()) {
@@ -253,7 +254,8 @@ public class DBDao {
 		contentValues.put("description", offlineFeedbacked.getDescription());
 		contentValues.put("time", offlineFeedbacked.getFeedbackTime());
 		if (db.insert("FT_TO_FEEDBACK_INFO", null, contentValues) == -1) {
-			Log.e(TAG, "插入离线已反馈纪录失败！time字段：" + offlineFeedbacked.getFeedbackTime());
+			Log.e(TAG,
+					"插入离线已反馈纪录失败！time字段：" + offlineFeedbacked.getFeedbackTime());
 			return false;
 		} else {
 			return true;
@@ -289,13 +291,13 @@ public class DBDao {
 	/**
 	 *  获取所有离线状态下被置为未反馈的纪录
 	 */
-	public List<OfflineUnfeedback> getAllOfflineUnfeedbacksByTime() {
+	public List<AbsOfflineBean> getAllOfflineUnfeedbacksByTime() {
 		SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
 		Cursor cursor = db
 				.rawQuery(
 						"select * from FT_SET_UNFEEDBACK_STATUS_INFO order by time asc",
 						null);
-		List<OfflineUnfeedback> unfeedbackList = new ArrayList<>();
+		List<AbsOfflineBean> unfeedbackList = new ArrayList<>();
 		while (cursor.moveToNext()) {
 			unfeedbackList.add(new OfflineUnfeedback(cursor.getString(0),
 					cursor.getString(1)));
@@ -513,8 +515,7 @@ public class DBDao {
 									baseInfo.getLookTime() });
 			if (cursor.getCount() == 0) {
 				// 插入
-				contentValues
-						.put("detail_version", baseInfo.getProVersion());
+				contentValues.put("detail_version", baseInfo.getProVersion());
 				db.insert("FT_FB_BASE_INFO", null, contentValues);
 			} else {
 				db.update(
@@ -688,18 +689,18 @@ public class DBDao {
 		Cursor cursor = db.rawQuery("select * from FT_FB_BASE_INFO" + whereSql,
 				null);
 		// XXX Fuckyou
-//		while (cursor.moveToNext()) {
-//			ftfbBaseInfos.add(new FTFBBaseInfo(cursor.getString(0), cursor
-//					.getString(1), cursor.getString(2), cursor.getString(3),
-//					cursor.getString(4), cursor.getString(5), new FanBrand(
-//							cursor.getString(6), cursor.getString(7)),
-//					new FanType(cursor.getString(7), cursor.getString(8),
-//							cursor.getString(9)), cursor.getString(10), cursor
-//							.getString(11), cursor.getString(12), cursor
-//							.getString(13), cursor.getInt(14), cursor
-//							.getString(15), cursor.getString(16), cursor
-//							.getInt(17)));
-//		}
+		// while (cursor.moveToNext()) {
+		// ftfbBaseInfos.add(new FTFBBaseInfo(cursor.getString(0), cursor
+		// .getString(1), cursor.getString(2), cursor.getString(3),
+		// cursor.getString(4), cursor.getString(5), new FanBrand(
+		// cursor.getString(6), cursor.getString(7)),
+		// new FanType(cursor.getString(7), cursor.getString(8),
+		// cursor.getString(9)), cursor.getString(10), cursor
+		// .getString(11), cursor.getString(12), cursor
+		// .getString(13), cursor.getInt(14), cursor
+		// .getString(15), cursor.getString(16), cursor
+		// .getInt(17)));
+		// }
 		Log.i(TAG, "按照条件从FTFB表查出数量：" + cursor.getCount());
 		cursor.close();
 		return ftfbBaseInfos;
@@ -751,10 +752,10 @@ public class DBDao {
 
 		// 获取树根节点信息
 		FTBaseInfo ftBaseInfo = getFTQBaseInfoByCode(code);
-		TreeRoot treeRoot = new TreeRoot(code, ""
-				+ ftBaseInfo.getProVersion(), ftBaseInfo.getMainFaultCode(),
-				ftBaseInfo.getFollowFaultCode(), ftBaseInfo.getChineseName(),
-				ftBaseInfo.getEnglishName(), ftBaseInfo.getTriggerCondition());
+		TreeRoot treeRoot = new TreeRoot(code, "" + ftBaseInfo.getProVersion(),
+				ftBaseInfo.getMainFaultCode(), ftBaseInfo.getFollowFaultCode(),
+				ftBaseInfo.getChineseName(), ftBaseInfo.getEnglishName(),
+				ftBaseInfo.getTriggerCondition());
 
 		return new TreeBean(treeRoot, faultReasonNodes, reasonCheckNodes,
 				handleFaultTreeNodes);
@@ -785,10 +786,11 @@ public class DBDao {
 						.getString(2), urlCursor.getString(3)));
 			}
 			urlCursor.close();
-			FaultTreeNode faultTreeNode = new FaultTreeNode(urlBeans, FTCode,
-					level, cursor.getString(2), cursor.getString(3),
-					cursor.getString(4), cursor.getInt(5));
-			faultTreeNodes.add(faultTreeNode);
+			// 66666
+			// FaultTreeNode faultTreeNode = new FaultTreeNode(urlBeans, FTCode,
+			// level, cursor.getString(2), cursor.getString(3),
+			// cursor.getString(4), cursor.getInt(5));
+			// faultTreeNodes.add(faultTreeNode);
 		}
 		cursor.close();
 		return faultTreeNodes;
@@ -816,7 +818,8 @@ public class DBDao {
 			contentValues.put("parent_code", faultTreeNode.getParentCode());
 			contentValues.put("code", faultTreeNode.getCode());
 			contentValues.put("name", faultTreeNode.getName());
-			contentValues.put("persentage", faultTreeNode.getPercentage());
+			// 66666
+			// contentValues.put("persentage", faultTreeNode.getPercentage());
 			db.insert("FT_DETAIL_INFO", null, contentValues);
 		}
 
@@ -827,7 +830,8 @@ public class DBDao {
 			contentValues.put("parent_code", faultTreeNode.getParentCode());
 			contentValues.put("code", faultTreeNode.getCode());
 			contentValues.put("name", faultTreeNode.getName());
-			contentValues.put("persentage", faultTreeNode.getPercentage());
+			// 66666
+			// contentValues.put("persentage", faultTreeNode.getPercentage());
 			db.insert("FT_DETAIL_INFO", null, contentValues);
 		}
 
@@ -838,7 +842,8 @@ public class DBDao {
 			contentValues.put("parent_code", faultTreeNode.getParentCode());
 			contentValues.put("code", faultTreeNode.getCode());
 			contentValues.put("name", faultTreeNode.getName());
-			contentValues.put("persentage", faultTreeNode.getPercentage());
+			// 66666
+			// contentValues.put("persentage", faultTreeNode.getPercentage());
 			db.insert("FT_DETAIL_INFO", null, contentValues);
 		}
 

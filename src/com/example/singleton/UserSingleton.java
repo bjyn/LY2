@@ -7,6 +7,7 @@ import com.example.bean.Company;
 import com.example.bean.FanBrand;
 import com.example.bean.FanType;
 import com.example.bean.UnfeedbackFT;
+import com.example.tree_component.bean.PartInfo;
 
 /**
  * 程序运行过程中保存用户相关信息的单例
@@ -25,6 +26,19 @@ public final class UserSingleton {
 	private List<Company> companies = new ArrayList<Company>();// 项目公司列表
 	private List<UnfeedbackFT> unfeedbackFTs = new ArrayList<UnfeedbackFT>();// 未反馈列表
 	private static UserSingleton userSingleton;
+	
+	// params between activities
+	private PartInfo partInfo;
+	
+	
+
+	public PartInfo getPartInfo() {
+		return partInfo;
+	}
+
+	public void setPartInfo(PartInfo partInfo) {
+		this.partInfo = partInfo;
+	}
 
 	public String getOrganization() {
 		return organization;

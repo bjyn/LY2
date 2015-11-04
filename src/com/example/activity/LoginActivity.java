@@ -25,7 +25,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
@@ -53,7 +52,7 @@ public class LoginActivity extends Activity {
 	private EditText userCodeEt;// 用户名输入
 	private EditText pwdEt;// 用户密码输入
 	private Button loginButton;// 登录按钮
-	private TextView versionTv;// 显示版本
+//	private TextView versionTv;// 显示版本
 	private ProgressDialog progressDialog;// 环形进度条
 	private DBDao dbDao;// dao
 	private HttpUtils httpUtils = new HttpUtils(this);
@@ -70,8 +69,8 @@ public class LoginActivity extends Activity {
 		userCodeEt = (EditText) findViewById(R.id.user_code_et);
 		pwdEt = (EditText) findViewById(R.id.user_pwd_et);
 		loginButton = (Button) findViewById(R.id.load_btn);
-		versionTv = (TextView) findViewById(R.id.load_version_tv);
-		versionTv.setText("当前版本号：" + getAppVersion());
+//		versionTv = (TextView) findViewById(R.id.load_version_tv);
+//		versionTv.setText("当前版本号：" + getAppVersion());
 		// 初始化数据库
 		initiaDatabase();
 		dbDao = new DBDao(LoginActivity.this);
