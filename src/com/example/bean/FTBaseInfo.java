@@ -21,7 +21,7 @@ public class FTBaseInfo implements Serializable {
 	private String faultPhe;// 故障现象
 	private int version;// 基本版本
 	private String remark;// 备注
-	private int proVersion;// 详细信息版本
+	private int proVersion;// 故障树概率版本,现阶段不考虑
 	private String createUser;
 	private String createTime;
 	private String modifyTime;

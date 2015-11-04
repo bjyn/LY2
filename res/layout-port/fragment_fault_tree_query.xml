@@ -11,24 +11,38 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="10dp"
-        android:background="@drawable/shape_rectangle_gray_border"
         android:orientation="horizontal" >
 
-        <TextView
-           
-            android:layout_width="22dp"
-            android:layout_height="23dp"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="10dp"
-            android:background="@drawable/search_flag" />
-
-        <TextView
-            android:id="@+id/search_by_fault_code_tv"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical|left"
-            android:hint="@string/please_input_fault_code"
-            android:textSize="18sp" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/shape_rectangle_gray_border"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="22dp"
+                android:layout_height="23dp"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="10dp"
+                android:background="@drawable/search_flag" />
+
+            <EditText
+                android:id="@+id/search_by_fault_code_et"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|left"
+                android:hint="@string/please_input_fault_code"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/search_by_fault_code_confirm_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="3dp"
+            android:text="@string/confirm" />
     </LinearLayout>
 
     <View
@@ -37,7 +51,7 @@
         android:background="#d3d3d3" />
 
     <ListView
-        android:id="@+id/listView"
+        android:id="@+id/listview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
     </ListView>

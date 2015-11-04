@@ -38,17 +38,11 @@ import com.example.mywidget.HintSpinner;
 import com.example.singleton.UserSingleton;
 
 public class FaultFragment extends Fragment {
-	protected EditText faultTreeCodeEt;// 输入要查询的树的code
-	protected EditText faultPheEt;// 故障树查询页面中，输入的是故障现象； 在故障树反馈页面中，输入的是反馈状态.
-	protected HintSpinner chooseFanBrandSp;//选择风机品牌的spinner
-	protected HintSpinner chooseFanTypeSp;//选择风机类型的spinner
-	protected Button queryConditionCleanBtn;//确认查询条件，查询触发按钮
-	protected Button queryConfirmBtn;// 不同页面中，点击触发的事件不同
+	private int currentPage;//当前页页码
+	private int currentPageCount;//当前页记录条数
+	protected Button searchByFaultCodeBtn;// 确认查询条件，查询触发按钮
+	protected EditText searchByFaultCodeEt;// 不同页面中，点击触发的事件不同
 	protected ListView resultListView;// 不同页面中的显示不同
-	protected String chosedFanBrandCode = null;
-	protected String chosedFanTypeCode = null;
-	protected List<FanBrand> allFanBrands;
-	protected List<FanType> allFanTypes;
 	protected UserSingleton userSingleton = UserSingleton.getInstance();
 	protected HttpUtils httpUtils = new HttpUtils(getActivity());
 	@SuppressLint("SimpleDateFormat")
@@ -60,188 +54,17 @@ public class FaultFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		allFanBrands = userSingleton.getFanBrands();
-		allFanTypes = userSingleton.getFanTypes();
+
+		List<FanBrand> allFanBrands = userSingleton.getFanBrands();
+		List<FanType> allFanTypes = userSingleton.getFanTypes();
 		View view = inflater.inflate(R.layout.fragment_fault_tree_query,
 				container, false);
-//		faultTreeCodeEt = (EditText) view.findViewById(R.id.fault_tree_code);
-//		faultPheEt = (EditText) view
-//				.findViewById(R.id.fault_phe_or_fb_status_et);
-//		queryConditionCleanBtn = (Button) view
-//				.findViewById(R.id.query_condition_clean_btn);
-//		
-//		queryConfirmBtn = (Button) view.findViewById(R.id.query_confirm_btn);
-//		resultListView = (ListView) view.findViewById(R.id.listView);
-//
-//		// 设置自定义spinner
-//		setFanBrandSpinner(inflater);
-//		setFanTypeSpinner(inflater, allFanTypes);
-//		chosedFanBrandCode = null;
-//		chosedFanTypeCode = null;
+		searchByFaultCodeBtn = (Button) view
+				.findViewById(R.id.search_by_fault_code_confirm_btn);
+		searchByFaultCodeEt = (EditText) view
+				.findViewById(R.id.search_by_fault_code_et);
+		resultListView = (ListView) view.findViewById(R.id.listview);
 		return view;
-	}
-
-	/**
-	 * 自定义spinner载入函数，通过popup listview的方式实现
-	 * 
-	 * @param inflater
-	 *            布局填充器
-	 */
-	@SuppressWarnings("deprecation")
-	@SuppressLint("InflateParams") private void setFanBrandSpinner(final LayoutInflater inflater) {
-		{
-//			View viewInFanBrandPopup = inflater.inflate(
-//					R.layout.popupwindow_within_fan_brand_list, null);
-//			chooseFanBrandLv = (ListView) viewInFanBrandPopup
-//					.findViewById(R.id.fan_brand_listview_in_popup);
-//			List<Map<String, String>> fanBrandDataList = new ArrayList<>();
-//			for (FanBrand fanBrand : allFanBrands) {
-//				Map<String, String> map = new HashMap<>();
-//				map.put("name", fanBrand.getName());
-//				fanBrandDataList.add(map);
-//			}
-//			SimpleAdapter fanBrandAdapter = new SimpleAdapter(getActivity(),
-//					fanBrandDataList, R.layout.item_listview_in_popup,
-//					new String[] { "name" },
-//					new int[] { R.id.popup_listview_item_tv });
-//			chooseFanBrandLv.setAdapter(fanBrandAdapter);
-//			chooseFanBrandLv.setOnItemClickListener(new OnItemClickListener() {
-//
-//				@Override
-//				public void onItemClick(AdapterView<?> arg0, View arg1,
-//						int position, long arg3) {
-//					// 每次选定品牌都会清空
-//					chosedFanBrandCode = allFanBrands.get(position).getCode();
-//					chooseFanBrandTv.setText(allFanBrands.get(position)
-//							.getName());
-//					// 候选的型号列表
-//					List<FanType> candidateFanTypes = new ArrayList<>();
-//					for (FanType fanType : allFanTypes) {
-//						if (fanType.getBrandCode().equals(chosedFanBrandCode)) {
-//							candidateFanTypes.add(fanType);
-//						}
-//					}
-//					setFanTypeSpinner(inflater, candidateFanTypes);
-//				}
-//			});
-//			chooseFanBrandPopupWindow = new PopupWindow(viewInFanBrandPopup,
-//					310, 400);
-//			chooseFanBrandPopupWindow
-//					.setAnimationStyle(R.style.popupwindow_anim_style);
-//			// 只有在设置了popupwindow的背景后，点击popupwindow外面才会消失
-//			chooseFanBrandPopupWindow
-//					.setBackgroundDrawable(new BitmapDrawable());
-//			chooseFanBrandPopupWindow.setFocusable(true);
-//
-//			// 设置自定义下拉列表打开关闭事件
-//			OnClickListener chooseFanTVClickListener = new OnClickListener() {
-//
-//				@Override
-//				public void onClick(View v) {
-//					switch (v.getId()) {
-//					case R.id.choose_fan_brand_code_tv:
-//						if (chooseFanBrandPopupWindow.isShowing()) {
-//							chooseFanBrandPopupWindow.dismiss();
-//						} else {
-//							chooseFanBrandPopupWindow
-//									.showAsDropDown(chooseFanBrandTv);
-//						}
-//						break;
-//					case R.id.choose_fan_type_code_tv:
-//						if (chooseFanTypePopupWindow.isShowing())
-//							chooseFanTypePopupWindow.dismiss();
-//						else {
-//							chooseFanTypePopupWindow
-//									.showAsDropDown(chooseFanTypeTv);
-//						}
-//						break;
-//					default:
-//						break;
-//					}
-//				}
-//			};
-//			chooseFanBrandTv.setOnClickListener(chooseFanTVClickListener);
-		}
-	}
-
-	/**
-	 * 设置风扇型号的下拉
-	 * 
-	 * @param inflater
-	 * @param fanTypes
-	 */
-	@SuppressWarnings("deprecation")
-	@SuppressLint("InflateParams")
-	protected void setFanTypeSpinner(LayoutInflater inflater,
-			final List<FanType> fanTypes) {
-		// 风机类型spinner：
-//		View viewInFanTypePopup = inflater.inflate(
-//				R.layout.popupwindow_within_fan_type_list, null);
-//		chooseFanTypeLv = (ListView) viewInFanTypePopup
-//				.findViewById(R.id.fan_type_listview_in_popup);
-//		List<Map<String, String>> fanTypeDataList = new ArrayList<>();
-//		for (FanType fanType : fanTypes) {
-//			Map<String, String> map = new HashMap<>();
-//			map.put("name", fanType.getName());
-//			fanTypeDataList.add(map);
-//		}
-//		SimpleAdapter fanTypeAdapter = new SimpleAdapter(getActivity(),
-//				fanTypeDataList, R.layout.item_listview_in_popup,
-//				new String[] { "name" },
-//				new int[] { R.id.popup_listview_item_tv });
-//		chooseFanTypeLv.setAdapter(fanTypeAdapter);
-//		chooseFanTypeLv.setOnItemClickListener(new OnItemClickListener() {
-//			@Override
-//			public void onItemClick(AdapterView<?> arg0, View arg1,
-//					int position, long arg3) {
-//				// 当一个型号选定的时候，获取它的品牌。更改品牌。
-//				chosedFanTypeCode = fanTypes.get(position).getCode();
-//				chooseFanTypeTv.setText(fanTypes.get(position).getName());
-//				for (FanBrand fanBrand : allFanBrands) {
-//					if (fanBrand.getCode().equals(
-//							fanTypes.get(position).getBrandCode())) {
-//						chosedFanBrandCode = fanBrand.getCode();
-//						chooseFanBrandTv.setText(fanBrand.getName());
-//						break;
-//					}
-//				}
-//			}
-//		});
-//
-//		chooseFanTypePopupWindow = new PopupWindow(viewInFanTypePopup, 310, 400);
-//		chooseFanTypePopupWindow.setFocusable(true);
-//		chooseFanTypePopupWindow
-//				.setAnimationStyle(R.style.popupwindow_anim_style);
-//		chooseFanTypePopupWindow.setBackgroundDrawable(new BitmapDrawable());
-//
-//		// 设置自定义下拉列表打开关闭事件
-//		OnClickListener chooseFanTVClickListener = new OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//				switch (v.getId()) {
-//				case R.id.choose_fan_brand_code_tv:
-//					if (chooseFanBrandPopupWindow.isShowing()) {
-//						chooseFanBrandPopupWindow.dismiss();
-//					} else {
-//						chooseFanBrandPopupWindow
-//								.showAsDropDown(chooseFanBrandTv);
-//					}
-//					break;
-//				case R.id.choose_fan_type_code_tv:
-//					if (chooseFanTypePopupWindow.isShowing())
-//						chooseFanTypePopupWindow.dismiss();
-//					else {
-//						chooseFanTypePopupWindow
-//								.showAsDropDown(chooseFanTypeTv);
-//					}
-//					break;
-//				default:
-//					break;
-//				}
-//			}
-//		};
-//		chooseFanTypeTv.setOnClickListener(chooseFanTVClickListener);
 	}
 
 	/**
@@ -264,9 +87,9 @@ public class FaultFragment extends Fragment {
 					.getJSONArray("FTVersionArray");
 			for (Object object : versionArray) {
 				JSONObject version = (JSONObject) object;
-//				DetailVersion detailVersion = new DetailVersion(
-//						version.getString("code"), version.getString("version"));
-//				detailVersions.add(detailVersion);
+				// DetailVersion detailVersion = new DetailVersion(
+				// version.getString("code"), version.getString("version"));
+				// detailVersions.add(detailVersion);
 			}
 			return detailVersions;
 		} else {
@@ -304,6 +127,24 @@ public class FaultFragment extends Fragment {
 			}
 
 		}
+	}
+
+	/**
+	 * 从MainActivity中接受的委托查询
+	 * 
+	 * @param faultCode
+	 *            故障代码
+	 * @param faultKeyword
+	 *            故障现象
+	 * @param fanBrandCodeObject
+	 *            风机品牌code
+	 * @param fanTypeCodeObject
+	 *            风机类型code
+	 */
+	public void queryFunction(String faultCode, Object faultKeyword,
+			Object fanBrandCodeObject, Object fanTypeCodeObject) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

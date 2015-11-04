@@ -6,7 +6,6 @@ import java.util.List;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +50,7 @@ public class HintSpinnerAdapter extends ArrayAdapter<String> {
 		TextView tv = (TextView) convertView.findViewById(android.R.id.text1);
 		tv.setText(items.get(position));
 		tv.setTextColor(Color.parseColor("#808080"));
-		tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17);
+		tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
 		return convertView;
 	}
 }

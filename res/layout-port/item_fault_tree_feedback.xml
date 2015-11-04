@@ -19,15 +19,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="3"
-                android:padding="3dp"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+                android:padding="3dp" >
 
                 <ImageView
                     android:id="@+id/feedback_status_pic"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/feedbacked_type" />
-
             </LinearLayout>
 
             <LinearLayout
@@ -125,31 +124,15 @@
                         android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
-
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="5"
-            android:orientation="vertical" >
-
-            <Button
-                android:id="@+id/download_fault_tree_btn"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:padding="1dp"
-                android:text="@string/download" />
-
-            <Button
-                android:id="@+id/show_more_detail_btn"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:padding="1dp"
-                android:text="@string/more" />
-
-        </LinearLayout>
-
+        <Button
+            android:id="@+id/show_more_detail_btn"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:background="@drawable/spinner_close_log"
+            android:padding="1dp" />
     </LinearLayout>
 
 </LinearLayout>

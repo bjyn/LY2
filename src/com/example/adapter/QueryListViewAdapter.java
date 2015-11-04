@@ -6,7 +6,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -15,15 +14,10 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.activity.FaultTreeInfoActivity;
 import com.example.bean.FTBaseInfo;
-import com.example.bean.QueryListItem;
-import com.example.common.HttpUtils;
-import com.example.common.HttpUtils.FTDownloadListener;
 import com.example.lyfaultdiagnosissystem.R;
-import com.example.tree_component.bean.TreeBean;
 
 /**
  * 查询页面的适配器
@@ -35,18 +29,13 @@ public class QueryListViewAdapter extends BaseAdapter {
 	public static final String STATUS_DOWNLOADED = "已下载";
 	public static final String STATUS_TO_UPDATE = "可更新";
 	public static final String STATUS_TO_DOWNLOAD = "下载";
-	private List<QueryListItem> queryListItems;
+	private List<FTBaseInfo> queryListItems;
 	private Context context;
-	private HttpUtils httpUtils;
-	private Handler handler;
 
-	public QueryListViewAdapter(List<QueryListItem> queryListItems,
-			Context context, Handler handler) {
+	public QueryListViewAdapter(List<FTBaseInfo> queryListItems, Context context) {
 		super();
 		this.queryListItems = queryListItems;
 		this.context = context;
-		this.handler = handler;
-		this.httpUtils = new HttpUtils(context);
 	}
 
 	@Override
@@ -85,12 +74,7 @@ public class QueryListViewAdapter extends BaseAdapter {
 				.findViewById(R.id.fault_phe_tv);
 		Button showMoreButton = (Button) linearLayout
 				.findViewById(R.id.show_more_detail_btn);
-		final Button downloadButton = (Button) linearLayout
-				.findViewById(R.id.download_fault_tree_btn);
-		final FTBaseInfo ftBaseInfo = queryListItems.get(position)
-				.getFtBaseInfo();
-		final int latestVersion = queryListItems.get(position)
-				.getLatestVersion();
+		final FTBaseInfo ftBaseInfo = queryListItems.get(position);
 		mainFaulTextView.setText(ftBaseInfo.getMainFaultCode());
 		followFaultTextView.setText(ftBaseInfo.getFollowFaultCode());
 		chineseNameTextView.setText(ftBaseInfo.getChineseName());
@@ -111,7 +95,7 @@ public class QueryListViewAdapter extends BaseAdapter {
 								FaultTreeInfoActivity.class);
 						Bundle bundle = new Bundle();
 						bundle.putSerializable("obj",
-								queryListItems.get(position).getFtBaseInfo());
+								queryListItems.get(position));
 						intent.putExtras(bundle);
 						intent.putExtra("type", "FTBaseInfo");
 						context.startActivity(intent);
@@ -119,136 +103,6 @@ public class QueryListViewAdapter extends BaseAdapter {
 				};
 			}
 		});
-
-		String downloadStatus = queryListItems.get(position)
-				.getDownloadStatus();
-		if (downloadStatus.equals(STATUS_DOWNLOADED)) {
-			downloadButton.setText("已下载");
-			downloadButton.setClickable(false);
-		} else if (downloadStatus.equals(STATUS_TO_DOWNLOAD)) {
-			downloadButton.setText("下载");
-			downloadButton.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					downloadButton.setText("下载中");
-					if (httpUtils.getNetStatus() > 0) {
-						new Thread(new Runnable() {
-
-							@Override
-							public void run() {
-								httpUtils.downloadFT(ftBaseInfo.getCode(),
-										
-										new FTDownloadListener() {
-											@Override
-											public void onFTDownloadListener(
-													String downloadStatus,
-													TreeBean treeBean) {
-												if (downloadStatus
-														.equals(HttpUtils.DOWNLOAD_SUCCEED)) {
-													handler.post(new Runnable() {
-														public void run() {
-															downloadButton
-																	.setText("已下载");
-															downloadButton
-																	.setClickable(false);
-														}
-													});
-
-												} else if (downloadStatus
-														.equals(HttpUtils.DOWNLOAD_FAILED)) {
-													handler.post(new Runnable() {
-														public void run() {
-															downloadButton
-																	.setText("下载");
-															downloadButton
-																	.setClickable(true);
-															Toast.makeText(
-																	context,
-																	"下载失败",
-																	Toast.LENGTH_SHORT)
-																	.show();
-														}
-													});
-
-												}
-											}
-										});
-
-							}
-						}).start();
-					} else {
-						Toast.makeText(context, "离线状态下不可更新。检查网络状态。",
-								Toast.LENGTH_SHORT).show();
-					}
-
-				}
-			});
-		} else if (downloadStatus.equals(STATUS_TO_UPDATE)) {
-			downloadButton.setText("可更新");
-			downloadButton.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					downloadButton.setText("可更新");
-					if (httpUtils.getNetStatus() > 0) {
-						new Thread(new Runnable() {
-
-							@Override
-							public void run() {
-								httpUtils.downloadFT(ftBaseInfo.getCode(),
-										
-										new FTDownloadListener() {
-
-											@Override
-											public void onFTDownloadListener(
-													String downloadStatus,
-													TreeBean treeBean) {
-												if (downloadStatus
-														.equals(HttpUtils.DOWNLOAD_SUCCEED)) {
-													handler.post(new Runnable() {
-
-														@Override
-														public void run() {
-															downloadButton
-																	.setText("已下载");
-															downloadButton
-																	.setClickable(false);
-														}
-													});
-
-												} else if (downloadStatus
-														.equals(HttpUtils.DOWNLOAD_FAILED)) {
-													handler.post(new Runnable() {
-
-														@Override
-														public void run() {
-															downloadButton
-																	.setText("可更新");
-															downloadButton
-																	.setClickable(true);
-															Toast.makeText(
-																	context,
-																	"更新失败",
-																	Toast.LENGTH_SHORT)
-																	.show();
-														}
-													});
-
-												}
-											}
-										});
-							}
-						}).start();
-					} else {
-						Toast.makeText(context, "离线状态下不可更新。检查网络状态。",
-								Toast.LENGTH_SHORT).show();
-					}
-
-				}
-			});
-		}
-
 		return linearLayout;
 	}
 

@@ -9,6 +9,7 @@ import java.util.Map;
 import net.tsz.afinal.FinalHttp;
 import net.tsz.afinal.http.AjaxCallBack;
 import net.tsz.afinal.http.AjaxParams;
+import android.R.integer;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -39,9 +40,11 @@ import com.example.sqlite.DBDao;
 import com.example.tree_component.bean.TreeBean;
 
 public class FaultQueryFragment extends FaultFragment {
+	private static boolean canShowHot = true;
+
 	public static final String TAG = "FaultQueryFragment";
 	private DBDao dbDao;
-	List<QueryListItem> queryListItems = new ArrayList<>();
+	List<FTBaseInfo> ftBaseInfos = new ArrayList<FTBaseInfo>();
 	private Handler handler = new Handler();
 	private ProgressDialog progressDialog;
 
@@ -50,201 +53,11 @@ public class FaultQueryFragment extends FaultFragment {
 			Bundle savedInstanceState) {
 		View view = super.onCreateView(inflater, container, savedInstanceState);// 继承父类
 		dbDao = new DBDao(getActivity());
-		queryConditionCleanBtn.setOnClickListener(new OnClickListener() {
-
+		searchByFaultCodeBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				faultPheEt.setText("");
-				faultTreeCodeEt.setText("");
-//				chooseFanBrandTv.setText("");
-//				chooseFanTypeTv.setText("");
-				chosedFanBrandCode = null;
-				chosedFanTypeCode = null;
-			}
-		});
-		queryConfirmBtn.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (UserSingleton.getInstance().isSearchable()) {
-					final String faultCode = faultTreeCodeEt.getText()
-							.toString();
-					final String faultKeyword = faultPheEt.getText().toString();
-					// 是否有至少一个查询条件
-					if (faultCode == "" && faultKeyword == null
-							&& chosedFanBrandCode == null
-							&& chosedFanTypeCode == null) {
-						Toast.makeText(getActivity(), "请输入至少一个查询条件",
-								Toast.LENGTH_SHORT).show();
-					} else {
-						// 是网络查询还是本地查询
-						if (httpUtils.getNetStatus() > 0) {
-							FinalHttp finalHttp = new FinalHttp();
-							Map<String, String> params = new HashMap<>();
-							params.put("token",
-									userSingleton.getValidateToken());
-							params.put("code", "");
-							params.put("faultCode", faultCode);
-							params.put("faultPhe", faultPheEt.getText()
-									.toString());
-							if (chosedFanBrandCode != null) {
-								params.put("fanBrandCode", chosedFanBrandCode);
-							} else {
-								params.put("fanBrandCode", "");
-							}
-							if (chosedFanTypeCode != null) {
-								params.put("fanTypeCode", chosedFanTypeCode);
-							} else {
-								params.put("fanTypeCode", null);
-							}
-							finalHttp.get(httpUtils.URL
-									+ httpUtils.QUERY_FT_LIST, new AjaxParams(
-									params), new AjaxCallBack<Object>() {
-
-								@Override
-								public void onFailure(Throwable t, int errorNo,
-										String strMsg) {
-									httpUtils.doFailure(t, errorNo, strMsg,
-											getActivity(), TAG);
-									Toast.makeText(getActivity(),
-											"查询失败。请检查网络设置。", Toast.LENGTH_SHORT)
-											.show();
-									super.onFailure(t, errorNo, strMsg);
-								}
-
-								@Override
-								public void onSuccess(Object t) {
-									JSONObject resultObject = JSON
-											.parseObject((String) t);
-									String status = resultObject
-											.getString("statusCode");
-									final JSONObject obj = resultObject
-											.getJSONObject("obj");
-									if (status.equals("300")) {
-										Toast.makeText(
-												getActivity(),
-												"查询失败。"
-														+ resultObject
-																.getString("message"),
-												Toast.LENGTH_SHORT).show();
-									} else if (status.equals("200")) {
-										// 新线程解析。插入或更新数据库。注意更新时不能覆盖原有版本。
-										new Thread(new Runnable() {
-
-											@Override
-											public void run() {
-												// 手动解析。。。。。。
-												JSONArray infoArray = obj
-														.getJSONArray("FTInfo");
-												List<FTBaseInfo> ftBaseInfos = new ArrayList<FTBaseInfo>();
-												for (Object object : infoArray) {
-													JSONObject info = ((JSONObject) object);
-													// TODO 666666
-													FTBaseInfo ftBaseInfo = null;
-													ftBaseInfos.add(ftBaseInfo);
-												}
-												// 更新或插入数据库，不带详情版本号的。
-												dbDao.updateFTBaseInfo(ftBaseInfos);
-
-												// 同步获取最新的版本列表。
-												List<CodeVersionPair> detailVersions = getLatestDetailVersions();
-
-												if (detailVersions == null) {
-													handler.post(new Runnable() {
-
-														@Override
-														public void run() {
-															Toast.makeText(
-																	getActivity(),
-																	"查询失败",
-																	Toast.LENGTH_SHORT)
-																	.show();
-														}
-													});
-													return;
-												} else {
-													// 对比版本，获取展示列表的数据
-													queryListItems = compareDetailVersions(
-															detailVersions,
-															ftBaseInfos);
-													// UI线程更新展示列表
-													handler.post(new Runnable() {
-
-														@Override
-														public void run() {
-															resultListView
-																	.setAdapter(new QueryListViewAdapter(
-																			queryListItems,
-																			getActivity(),
-																			handler));
-															resultListView
-																	.setOnItemClickListener(onItemClickListener);
-														}
-													});
-
-												}
-
-											}
-										}).start();
-									}
-									super.onSuccess(t);
-								}
-
-							});
-						} else {
-							new Thread(new Runnable() {
-
-								@Override
-								public void run() {
-									// 离线状态：数据库查询
-									List<FTBaseInfo> resultBaseInfos = dbDao
-											.getFtBaseInfosByConditions(
-													faultCode, faultKeyword,
-													chosedFanBrandCode,
-													chosedFanTypeCode);
-
-									for (FTBaseInfo ftBaseInfo : resultBaseInfos) {
-										if (ftBaseInfo.getProVersion() == 0) {
-											queryListItems
-													.add(new QueryListItem(
-															ftBaseInfo,
-															QueryListViewAdapter.STATUS_TO_DOWNLOAD,
-															ftBaseInfo
-																	.getProVersion()));
-										} else {
-											queryListItems
-													.add(new QueryListItem(
-															ftBaseInfo,
-															QueryListViewAdapter.STATUS_DOWNLOADED,
-															ftBaseInfo
-																	.getProVersion()));
-										}
-									}
-
-									handler.post(new Runnable() {
-
-										@Override
-										public void run() {
-											resultListView
-													.setAdapter(new QueryListViewAdapter(
-															queryListItems,
-															getActivity(),
-															handler));
-											resultListView
-													.setOnItemClickListener(onItemClickListener);
-										}
-									});
-
-								}
-							}).start();
-
-						}
-
-					}
-				} else {
-					Toast.makeText(getActivity(), "未反馈任务较多，无法继续查询",
-							Toast.LENGTH_SHORT).show();
-				}
-
+				queryFunction(searchByFaultCodeEt.getText().toString(), null,
+						null, null);
 			}
 		});
 		return view;
@@ -269,8 +82,8 @@ public class FaultQueryFragment extends FaultFragment {
 			for (CodeVersionPair detailVersion : detailVersions) {
 				if (detailVersion.getCode().equals(ftBaseInfo.getCode())) {
 					// TODO 加入版本号对比
-//					latestVersion = Integer.parseInt(detailVersion
-//							.getDetailVersion());
+					// latestVersion = Integer.parseInt(detailVersion
+					// .getDetailVersion());
 					break;
 				}
 			}
@@ -304,8 +117,7 @@ public class FaultQueryFragment extends FaultFragment {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
-			final FTBaseInfo ftBaseInfo = queryListItems.get(position)
-					.getFtBaseInfo();
+			final FTBaseInfo ftBaseInfo = ftBaseInfos.get(position);
 			progressDialog = ProgressDialog.show(getActivity(), "正在处理", "请稍后");
 			progressDialog.setCancelable(false);
 			// 防止耗时操作造成主线程卡顿。之后的操作在子线程中。
@@ -400,7 +212,7 @@ public class FaultQueryFragment extends FaultFragment {
 	 */
 	public void downloadTree(final String code, int version, final int model) {
 		// 版本获取成功，开始下载故障树
-		httpUtils.downloadFT(code,new FTDownloadListener() {
+		httpUtils.downloadFT(code, new FTDownloadListener() {
 
 			@Override
 			public void onFTDownloadListener(String downloadStatus,
@@ -512,7 +324,7 @@ public class FaultQueryFragment extends FaultFragment {
 							"200")) {
 						// 1.加入FTFB表
 						// TODO 666666666
-						FTFBBaseInfo ftfbBaseInfo =null;
+						FTFBBaseInfo ftfbBaseInfo = null;
 						List<FTFBBaseInfo> ftfbBaseInfos = new ArrayList<>();
 						ftfbBaseInfos.add(ftfbBaseInfo);
 						dbDao.updateFaultTreeFBBaseInfo(ftfbBaseInfos);
@@ -534,6 +346,172 @@ public class FaultQueryFragment extends FaultFragment {
 		}
 	}
 
+	/*
+	 * (non-Javadoc) 故障树查询fragment下的代理查询过程
+	 * 
+	 * @see com.example.fragment.FaultFragment#queryFunction(java.lang.String,
+	 * java.lang.String, java.lang.Object, java.lang.Object)
+	 */
+	@Override
+	public void queryFunction(final String faultCode,
+			final Object faultPheObject, final Object fanBrandCodeObject,
+			final Object fanTypeCodeObject) {
+		String faultPhe = (String) faultPheObject;
+		if (UserSingleton.getInstance().isSearchable()) {
+			// 是否有至少一个查询条件
+			if (faultCode == "" && faultPhe == null
+					&& fanBrandCodeObject == null && fanTypeCodeObject == null) {
+				Toast.makeText(getActivity(), "请输入至少一个查询条件", Toast.LENGTH_SHORT)
+						.show();
+			} else {
+				// 是网络查询还是本地查询
+				if (httpUtils.getNetStatus() > 0) {
+					queryOnline(faultCode, faultPhe, fanBrandCodeObject,
+							fanTypeCodeObject);
+				} else {
+					queryOffLine(faultCode, faultPhe, fanBrandCodeObject,
+							fanTypeCodeObject);
+				}
+
+			}
+		} else {
+			Toast.makeText(getActivity(), "未反馈任务较多，无法继续查询", Toast.LENGTH_SHORT)
+					.show();
+		}
+	}
+
+	/**
+	 * 在线查询
+	 * 
+	 * @param faultCode
+	 *            故障代码
+	 * @param faultPhe
+	 *            故障现象
+	 * @param fanBrandCodeObject
+	 *            风机品牌code
+	 * @param fanTypeCodeObject
+	 *            风机类型code
+	 */
+	private void queryOnline(final String faultCode, final String faultPhe,
+			final Object fanBrandCodeObject, final Object fanTypeCodeObject) {
+		FinalHttp finalHttp = new FinalHttp();
+		Map<String, String> params = new HashMap<>();
+		params.put("token", UserSingleton.getInstance().getValidateToken());
+		params.put("code", "");
+		// FIXME faultcode需不需要自己根据;进行拆分
+		params.put("faultCode", faultCode);
+		// FIXME 有故障代码时,是否还要传入故障现象
+		params.put("faultPhe", faultPhe);
+		if (fanBrandCodeObject != null) {
+			params.put("fanBrandCode", (String) fanBrandCodeObject);
+		} else {
+			params.put("fanBrandCode", "");
+		}
+		if (fanTypeCodeObject != null) {
+			params.put("fanTypeCode", (String) fanTypeCodeObject);
+		} else {
+			params.put("fanTypeCode", null);
+		}
+		finalHttp.get(httpUtils.URL + httpUtils.QUERY_FT_LIST, new AjaxParams(
+				params), new AjaxCallBack<Object>() {
+
+			@Override
+			public void onFailure(Throwable t, int errorNo, String strMsg) {
+				httpUtils.doFailure(t, errorNo, strMsg, getActivity(), TAG);
+				Toast.makeText(getActivity(), "查询失败。请检查网络设置。",
+						Toast.LENGTH_SHORT).show();
+				super.onFailure(t, errorNo, strMsg);
+			}
+
+			@Override
+			public void onSuccess(Object t) {
+				JSONObject resultObject = JSON.parseObject((String) t);
+				String status = resultObject.getString("statusCode");
+				final JSONObject obj = resultObject.getJSONObject("obj");
+				if (status.equals("300")) {
+					Toast.makeText(getActivity(),
+							"查询失败。" + resultObject.getString("message"),
+							Toast.LENGTH_SHORT).show();
+				} else if (status.equals("200")) {
+					// 新线程解析。插入或更新数据库。注意更新时不能覆盖原有版本。
+					new Thread(new Runnable() {
+
+						@Override
+						public void run() {
+							// 手动解析。。。。。。
+							JSONArray infoArray = obj.getJSONArray("FTInfo");
+							// 初始化此fragment下的基本信息数组
+							ftBaseInfos = new ArrayList<FTBaseInfo>();
+							for (Object object : infoArray) {
+								JSONObject info = ((JSONObject) object);
+								FTBaseInfo ftBaseInfo = null;
+								// TODO 将jsonObject解析为FTBaseInfo
+								ftBaseInfos.add(ftBaseInfo);
+							}
+							// 更新或插入数据库，不带详情版本号的。
+							dbDao.updateFTBaseInfo(ftBaseInfos);
+
+							// UI线程更新展示列表
+							handler.post(new Runnable() {
+
+								@Override
+								public void run() {
+									resultListView
+											.setAdapter(new QueryListViewAdapter(
+													ftBaseInfos, getActivity()));
+									resultListView
+											.setOnItemClickListener(onItemClickListener);
+								}
+							});
+
+						}
+					}).start();
+				}
+				super.onSuccess(t);
+			}
+
+		});
+	}
+
+	/**
+	 * 离线查询
+	 * 
+	 * @param faultCode
+	 *            故障代码
+	 * @param faultPhe
+	 *            故障现象
+	 * @param fanBrandCodeObject
+	 *            风机品牌code
+	 * @param fanTypeCodeObject
+	 *            风机类型code
+	 */
+	private void queryOffLine(final String faultCode, final String faultPhe,
+			final Object fanBrandCodeObject, final Object fanTypeCodeObject) {
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				// 离线状态：数据库查询
+				// TODO 根据;拆分code进行查询
+				ftBaseInfos = dbDao.getFtBaseInfosByConditions(faultCode,
+						faultPhe, (String) fanBrandCodeObject,
+						(String) fanTypeCodeObject);
+
+				handler.post(new Runnable() {
+
+					@Override
+					public void run() {
+						resultListView.setAdapter(new QueryListViewAdapter(
+								ftBaseInfos, getActivity()));
+						resultListView
+								.setOnItemClickListener(onItemClickListener);
+					}
+				});
+
+			}
+		}).start();
+	}
+
 	/**
 	 * 离线缓存未反馈信息
 	 * 
@@ -543,15 +521,15 @@ public class FaultQueryFragment extends FaultFragment {
 	private void offlineCached(FTBaseInfo baseInfo, String time) {
 
 		// 1.加入FTFB表
-		// TODO 
-		FTFBBaseInfo ftfbBaseInfo=null;
-//		FTFBBaseInfo ftfbBaseInfo = new FTFBBaseInfo("", baseInfo.getCode(),
-//				baseInfo.getMainFaultCode(), baseInfo.getFollowFaultCode(),
-//				baseInfo.getChineseName(), baseInfo.getEnglishName(),
-//				baseInfo.getFanBrand(), baseInfo.getFanType(), "1", "",
-//				baseInfo.getTriggerCondition(), baseInfo.getFaultPhe(),
-//				baseInfo.getVersion(), baseInfo.getRemark(), time,
-//				baseInfo.getProVersion());
+		// TODO
+		FTFBBaseInfo ftfbBaseInfo = null;
+		// FTFBBaseInfo ftfbBaseInfo = new FTFBBaseInfo("", baseInfo.getCode(),
+		// baseInfo.getMainFaultCode(), baseInfo.getFollowFaultCode(),
+		// baseInfo.getChineseName(), baseInfo.getEnglishName(),
+		// baseInfo.getFanBrand(), baseInfo.getFanType(), "1", "",
+		// baseInfo.getTriggerCondition(), baseInfo.getFaultPhe(),
+		// baseInfo.getVersion(), baseInfo.getRemark(), time,
+		// baseInfo.getProVersion());
 		List<FTFBBaseInfo> ftfbBaseInfos = new ArrayList<>();
 		ftfbBaseInfos.add(ftfbBaseInfo);
 		dbDao.updateFaultTreeFBBaseInfo(ftfbBaseInfos);

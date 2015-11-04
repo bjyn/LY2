@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mywidget="http://schemas.android.com/apk/res/com.example.lyfaultdiagnosissystem"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#cccccc" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="2dp"
+        android:background="#ffffff"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/shape_rectangle_gray_border"
+            android:padding="10dp" >
+
+            <AutoCompleteTextView
+                android:id="@+id/fault_tree_code_in_query_popup_et"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:ems="10"
+                android:gravity="center_vertical"
+                android:hint="@string/please_input_fault_code"
+                android:maxLength="32"
+                android:paddingLeft="7dp"
+                android:singleLine="true"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/fault_tree_code_in_query_popup_clean_btn"
+                android:layout_width="21dp"
+                android:layout_height="20dp"
+                android:layout_gravity="right"
+                android:background="@drawable/textview_clean"
+                android:gravity="center_vertical" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/shape_rectangle_gray_border"
+            android:padding="10dp" >
+
+            <AutoCompleteTextView
+                android:id="@+id/fault_phe_in_query_popup_et"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:ems="10"
+                android:gravity="center_vertical"
+                android:hint="@string/please_input_fault_phe"
+                android:maxLength="32"
+                android:paddingLeft="7dp"
+                android:singleLine="true"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/fault_phe_in_query_popup_clean_btn"
+                android:layout_width="21dp"
+                android:layout_height="20dp"
+                android:layout_gravity="right"
+                android:background="@drawable/textview_clean"
+                android:gravity="center_vertical" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/shape_rectangle_gray_border"
+            android:orientation="horizontal"
+            android:padding="10dp" >
+
+            <com.example.mywidget.HintSpinner
+                android:id="@+id/choose_fan_brand_in_query_popup_sp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:gravity="center_vertical|left"
+                android:spinnerMode="dialog"
+                mywidget:hints="@string/please_input_fan_brand" />
+
+            <TextView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="right"
+                android:background="@drawable/spinner_close_log"
+                android:focusable="false"
+                android:gravity="center" >
+            </TextView>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/shape_rectangle_gray_border"
+            android:orientation="horizontal"
+            android:padding="10dp" >
+
+            <com.example.mywidget.HintSpinner
+                android:id="@+id/choose_fan_type_in_query_popup_sp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:gravity="center_vertical|left"
+                mywidget:hints="@string/please_input_fan_type" />
+
+            <TextView
+                android:layout_width="21dp"
+                android:layout_height="20dp"
+                android:layout_gravity="right"
+                android:background="@drawable/spinner_close_log"
+                android:focusable="false"
+                android:gravity="center" >
+            </TextView>
+        </FrameLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp" >
+
+            <Button
+                android:id="@+id/query_condition_clean_in_query_btn"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:layout_alignParentLeft="true"
+                android:background="@drawable/search_clean"
+                android:text="@string/clear"
+                android:textColor="#ffffff"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/query_confirm_in_query_popup_btn"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/search_confirm"
+                android:text="@string/confirm"
+                android:textColor="#ffffff"
+                android:textSize="15sp" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout>

@@ -15,6 +15,7 @@
     <string name="please_input_fan_type">请输入风机类型</string>
     <string name="please_input_fault_code">请输入故障代码</string>
     <string name="please_input_fault_phe">请输入故障现象</string>
+    <string name="please_input_feedback_status">请输入反馈状态</string>
     <string name="user_name">用户姓名</string>
     <string name="senior_search">高级查询</string>
 

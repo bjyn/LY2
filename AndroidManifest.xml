@@ -40,7 +40,9 @@
             android:name="com.example.activity.LoginActivity"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
-        <activity android:name="com.example.activity.MainActivity" >
+        <activity
+            android:name="com.example.activity.MainActivity"
+            android:launchMode="singleTask" >
         </activity>
         <activity android:name="com.example.activity.FaultTreeInfoActivity" >
         </activity>

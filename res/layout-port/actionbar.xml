@@ -7,9 +7,9 @@
 
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="8dp"
         android:background="@android:color/transparent"
-        android:text="@string/senior_search"
         android:textColor="#0f7dcc" />
 
     <TextView
@@ -26,9 +26,11 @@
     <Button
         android:id="@+id/senior_search_btn"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginRight="8dp"
         android:background="@android:color/transparent"
         android:gravity="center_horizontal|bottom"
+        android:paddingBottom="3dp"
         android:text="@string/senior_search"
         android:textColor="#ffffff"
         android:textSize="16sp" />

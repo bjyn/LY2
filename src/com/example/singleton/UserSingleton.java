@@ -1,11 +1,11 @@
 package com.example.singleton;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.example.bean.Company;
 import com.example.bean.FanBrand;
 import com.example.bean.FanType;
-import com.example.bean.HotSearch;
 import com.example.bean.UnfeedbackFT;
 
 /**
@@ -14,21 +14,18 @@ import com.example.bean.UnfeedbackFT;
  * @author steven
  * 
  */
-public class UserSingleton {
+public final class UserSingleton {
 	private String validateToken;// 身份令牌
 	private String userName;// 用户姓名
 	private String organization;
 	private int unFeedbackNumber;// 未反馈的条目数
 	private int limitFeedbackNumber;// 未反馈的限制条目数
-	private List<FanBrand> fanBrands;// 品牌列表
-	private List<FanType> fanTypes;// 风机列表
-	private List<Company> companies;// 项目公司列表
-	private List<UnfeedbackFT> unfeedbackFTs;// 未反馈列表
-	private List<HotSearch> hotSearchs;
+	private List<FanBrand> fanBrands = new ArrayList<FanBrand>();// 品牌列表
+	private List<FanType> fanTypes = new ArrayList<FanType>();// 风机列表
+	private List<Company> companies = new ArrayList<Company>();// 项目公司列表
+	private List<UnfeedbackFT> unfeedbackFTs = new ArrayList<UnfeedbackFT>();// 未反馈列表
 	private static UserSingleton userSingleton;
-	
-	
-	
+
 	public String getOrganization() {
 		return organization;
 	}
@@ -78,6 +75,10 @@ public class UserSingleton {
 	}
 
 	private UserSingleton() {
+		// TODO TEst
+		// TODO TEst
+		fanBrands.add(new FanBrand("华创", "hua"));
+		fanBrands.get(0).setFanTypes((ArrayList<FanType>) fanTypes);
 	}
 
 	public static UserSingleton getInstance() {
@@ -108,20 +109,6 @@ public class UserSingleton {
 
 	public void setLimitFeedbackNumber(int limitFeedbackNumber) {
 		this.limitFeedbackNumber = limitFeedbackNumber;
-	}
-
-	/**
-	 * @return the hotSearchs
-	 */
-	public List<HotSearch> getHotSearchs() {
-		return hotSearchs;
-	}
-
-	/**
-	 * @param hotSearchs the hotSearchs to set
-	 */
-	public void setHotSearchs(List<HotSearch> hotSearchs) {
-		this.hotSearchs = hotSearchs;
 	}
 
 	/**
